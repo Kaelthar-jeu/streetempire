@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Street Empire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:ital,wght@0,300;0,400;1,300&family=Courier+Prime&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0c0c0c;--bg2:#111111;--bg3:#181818;--bg4:#202020;
+  --border:#2a2a2a;--border2:#383838;
+  --texte:#d0d0d0;--texte-dim:#707070;--texte-clair:#f0f0f0;
+  --rouge:#cc2200;--rouge-vif:#ff3311;--rouge-dim:#7a1500;
+  --beton:#3a3a3a;--beton-clair:#505050;
+  --or:#c8a040;--vert:#1a7a30;
+  --mono:'Courier Prime',monospace;
+  --titre:'Barlow Condensed',sans-serif;
+  --corps:'Barlow',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--texte);font-family:var(--corps);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* Texture béton */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+
+/* ── BARRE STUDIO ── */
+.studio-bar{position:relative;z-index:10;background:#080808;border-bottom:2px solid var(--rouge-dim);padding:6px 16px;text-align:center;}
+.studio-bar a{color:var(--texte-dim);font-size:11px;text-decoration:none;letter-spacing:3px;font-family:var(--mono);transition:color 0.2s;}
+.studio-bar a:hover{color:var(--rouge);}
+
+/* ── ÉCRAN INTRO ── */
+#ecran-intro{
+  position:fixed;inset:0;z-index:300;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;
+  background-image:
+    linear-gradient(to bottom, transparent 40%, rgba(204,34,0,0.04) 100%),
+    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.008) 80px, rgba(255,255,255,0.008) 81px),
+    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(255,255,255,0.008) 80px, rgba(255,255,255,0.008) 81px);
+}
+.intro-inner{max-width:560px;width:100%;text-align:left;}
+.intro-tag{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--rouge);text-transform:uppercase;margin-bottom:24px;animation:glisse 0.7s ease 0.1s both;}
+.intro-titre{font-family:var(--titre);font-size:clamp(80px,20vw,140px);font-weight:700;color:var(--texte-clair);line-height:0.85;letter-spacing:-2px;text-transform:uppercase;animation:glisse 0.7s ease 0.2s both;}
+.intro-titre span{display:block;color:var(--rouge);-webkit-text-stroke:1px var(--rouge-dim);}
+.intro-barre{width:100%;height:3px;background:var(--rouge);margin:24px 0;animation:largeur 0.8s ease 0.4s both;}
+@keyframes largeur{from{width:0}to{width:100%}}
+.intro-accroche{font-family:var(--corps);font-size:15px;color:var(--texte-dim);line-height:1.8;margin-bottom:48px;animation:glisse 0.7s ease 0.5s both;max-width:440px;}
+.intro-accroche strong{color:var(--texte);font-weight:400;}
+.intro-btns{display:flex;gap:12px;flex-wrap:wrap;animation:glisse 0.7s ease 0.65s both;}
+.btn-intro-p{background:var(--rouge);border:none;color:#fff;font-family:var(--titre);font-size:16px;font-weight:600;letter-spacing:3px;padding:16px 36px;cursor:pointer;text-transform:uppercase;transition:background 0.2s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.btn-intro-p:hover{background:var(--rouge-vif);}
+.btn-intro-s{background:none;border:1px solid var(--beton);color:var(--texte-dim);font-family:var(--mono);font-size:11px;letter-spacing:3px;padding:16px 24px;cursor:pointer;text-transform:uppercase;transition:all 0.2s;display:none;}
+.btn-intro-s:hover{border-color:var(--rouge-dim);color:var(--texte);}
+@keyframes glisse{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
+
+/* ── ÉCRAN SETUP ── */
+#ecran-setup{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px;
+  background-image:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,0.006) 80px,rgba(255,255,255,0.006) 81px);
+}
+.setup-wrap{max-width:600px;margin:auto;padding:40px 0;}
+.setup-titre{font-family:var(--titre);font-size:36px;font-weight:700;letter-spacing:2px;color:var(--texte-clair);text-transform:uppercase;border-left:4px solid var(--rouge);padding-left:16px;margin-bottom:4px;}
+.setup-sous{font-family:var(--mono);font-size:10px;color:var(--texte-dim);letter-spacing:3px;padding-left:20px;margin-bottom:40px;}
+.setup-bloc{margin-bottom:28px;}
+.setup-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--texte-dim);display:block;margin-bottom:8px;}
+.setup-input{width:100%;background:var(--bg3);border:none;border-bottom:2px solid var(--beton);color:var(--texte-clair);font-family:var(--mono);font-size:14px;padding:10px 12px;outline:none;transition:border-color 0.2s;border-radius:0;}
+.setup-input:focus{border-bottom-color:var(--rouge);}
+.setup-input::placeholder{color:var(--texte-dim);}
+
+/* Voie */
+.voie-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.voie-carte{background:var(--bg3);border:2px solid var(--border);padding:18px;cursor:pointer;transition:all 0.2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);}
+.voie-carte:hover{border-color:var(--beton-clair);}
+.voie-carte.sel{border-color:var(--rouge);background:rgba(204,34,0,0.08);}
+.voie-tag{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--rouge);text-transform:uppercase;margin-bottom:6px;}
+.voie-nom{font-family:var(--titre);font-size:20px;font-weight:700;color:var(--texte-clair);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.voie-desc{font-family:var(--corps);font-size:12px;color:var(--texte-dim);line-height:1.5;}
+
+/* Profil */
+.profil-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.profil-carte{background:var(--bg3);border:2px solid var(--border);padding:14px 12px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.profil-carte:hover{border-color:var(--beton-clair);}
+.profil-carte.sel{border-color:var(--rouge);background:rgba(204,34,0,0.08);}
+.profil-nom{font-family:var(--titre);font-size:15px;font-weight:700;color:var(--texte-clair);text-transform:uppercase;margin-bottom:4px;}
+.profil-stat{font-family:var(--mono);font-size:10px;color:var(--rouge);letter-spacing:1px;}
+
+/* Slider */
+.slider-wrap{display:flex;align-items:center;gap:12px;}
+.slider{flex:1;-webkit-appearance:none;height:3px;background:var(--beton);outline:none;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--rouge);cursor:pointer;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);}
+.slider-val{font-family:var(--mono);font-size:14px;color:var(--or);min-width:28px;}
+
+/* Mode input */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mode-carte{background:var(--bg3);border:2px solid var(--border);padding:14px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.mode-carte:hover{border-color:var(--beton-clair);}
+.mode-carte.sel{border-color:var(--rouge);background:rgba(204,34,0,0.08);}
+.mode-nom{font-family:var(--titre);font-size:14px;font-weight:700;color:var(--texte-clair);text-transform:uppercase;margin-bottom:4px;}
+.mode-desc{font-family:var(--mono);font-size:10px;color:var(--texte-dim);}
+
+.checkbox-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;margin-top:8px;}
+.checkbox-wrap input{accent-color:var(--rouge);cursor:pointer;}
+.checkbox-label{font-family:var(--mono);font-size:10px;color:var(--texte-dim);letter-spacing:1px;}
+
+.btn-setup{width:100%;background:var(--rouge);border:none;color:#fff;font-family:var(--titre);font-size:16px;font-weight:700;letter-spacing:4px;padding:16px;cursor:pointer;text-transform:uppercase;transition:background 0.2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));margin-top:8px;}
+.btn-setup:hover{background:var(--rouge-vif);}
+.btn-setup:disabled{background:var(--beton);cursor:not-allowed;clip-path:none;}
+
+/* ── ÉCRAN REPRISE ── */
+#ecran-reprise{display:none;position:fixed;inset:0;z-index:250;background:rgba(12,12,12,0.97);align-items:center;justify-content:center;padding:20px;}
+.reprise-box{background:var(--bg2);border:2px solid var(--beton);max-width:420px;width:100%;padding:36px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);}
+.reprise-titre{font-family:var(--titre);font-size:26px;font-weight:700;letter-spacing:2px;color:var(--texte-clair);text-transform:uppercase;border-left:3px solid var(--rouge);padding-left:12px;margin-bottom:24px;}
+.reprise-info{background:var(--bg3);padding:14px;margin-bottom:24px;border-left:2px solid var(--beton);}
+.reprise-ligne{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;font-family:var(--mono);}
+.reprise-cle{color:var(--texte-dim);}
+.reprise-val{color:var(--or);}
+.reprise-btns{display:flex;gap:10px;}
+.reprise-btn{flex:1;padding:12px;border:none;font-family:var(--mono);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.rbp{background:var(--rouge);color:#fff;}
+.rbp:hover{background:var(--rouge-vif);}
+.rbn{background:var(--bg3);color:var(--texte-dim);border:2px solid var(--beton);}
+.rbn:hover{border-color:var(--rouge-dim);color:var(--texte);}
+
+/* ── APP ── */
+#app{display:flex;flex-direction:column;min-height:100vh;max-width:1160px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px;border-bottom:2px solid var(--rouge-dim);flex-shrink:0;}
+.logo{font-family:var(--titre);font-size:22px;font-weight:700;letter-spacing:2px;color:var(--texte-clair);text-transform:uppercase;}
+.logo span{color:var(--rouge);}
+.header-droite{display:flex;align-items:center;gap:14px;}
+.voie-tag-hdr{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--rouge);border:1px solid var(--rouge-dim);padding:3px 8px;text-transform:uppercase;}
+.sauv{font-family:var(--mono);font-size:10px;color:var(--texte-dim);}
+.sauv.ok{color:var(--vert);}
+.sauv.en-cours{color:var(--or);}
+
+.main{display:flex;flex:1;gap:14px;padding:14px 0;min-height:0;}
+
+/* ── PANNEAU EMPIRE ── */
+.empire-panel{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:calc(100vh - 80px);position:sticky;top:0;}
+.emp-bloc{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--rouge-dim);padding:12px 14px;}
+.emp-titre{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rouge);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.emp-ligne{display:flex;justify-content:space-between;align-items:center;padding:3px 0;}
+.emp-nom{font-family:var(--mono);font-size:10px;color:var(--texte-dim);}
+.emp-val{font-family:var(--mono);font-size:11px;color:var(--or);font-weight:bold;}
+.emp-barre-wrap{background:var(--bg4);height:2px;margin-top:2px;margin-bottom:5px;overflow:hidden;}
+.emp-barre{height:100%;background:var(--rouge);transition:width 0.4s ease;}
+.emp-barre.verte{background:var(--vert);}
+.emp-barre.or{background:var(--or);}
+.emp-barre.beton{background:var(--beton-clair);}
+
+.cash-display{text-align:center;padding:14px;}
+.cash-montant{font-family:var(--titre);font-size:28px;font-weight:700;color:var(--or);letter-spacing:1px;}
+.cash-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--texte-dim);text-transform:uppercase;margin-top:2px;}
+
+.perso-bloc{text-align:center;padding:14px 12px;}
+.perso-surnom{font-family:var(--titre);font-size:22px;font-weight:700;color:var(--texte-clair);letter-spacing:1px;text-transform:uppercase;}
+.perso-voie{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--rouge);text-transform:uppercase;margin-top:3px;}
+.perso-saison{font-family:var(--mono);font-size:9px;color:var(--texte-dim);margin-top:6px;}
+
+.inv-item{font-family:var(--mono);font-size:10px;color:var(--texte-dim);padding:3px 0;border-bottom:1px solid var(--border);}
+.inv-item:last-child{border-bottom:none;}
+.inv-vide{font-family:var(--mono);font-size:10px;color:var(--border2);font-style:italic;}
+
+.btn-prem{width:100%;padding:11px;background:linear-gradient(135deg,var(--rouge-dim),var(--or));color:#fff;border:none;font-family:var(--mono);font-size:9px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:opacity 0.2s;}
+.btn-prem:hover{opacity:0.85;}
+
+/* ── PANNEAU JEU ── */
+.jeu-panel{flex:1;display:flex;flex-direction:column;min-width:0;gap:10px;}
+#recit{flex:1;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--rouge-dim);padding:22px;overflow-y:auto;min-height:0;font-family:var(--corps);}
+.entree{margin-bottom:20px;animation:fadeIn 0.35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.entree p{font-size:15px;line-height:1.9;color:var(--texte-clair);margin-bottom:10px;}
+.action-joueur{font-family:var(--mono);font-size:11px;color:var(--texte-dim);padding:7px 12px;border-left:3px solid var(--rouge-dim);margin-bottom:12px;letter-spacing:0.5px;background:rgba(204,34,0,0.04);}
+.maj-stats{font-family:var(--mono);font-size:11px;color:var(--or);padding:6px 10px;background:rgba(200,160,64,0.07);border-left:2px solid var(--or);margin-top:8px;letter-spacing:1px;}
+.sep{border:none;border-top:1px solid var(--border);margin:14px 0;opacity:0.6;}
+.curseur{display:inline-block;width:2px;height:14px;background:var(--rouge);animation:clign 0.7s infinite;vertical-align:text-bottom;margin-left:2px;}
+@keyframes clign{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+
+/* Choix boutons */
+.choix-bloc{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--rouge);padding:14px 16px;margin-top:12px;}
+.choix-titre{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rouge);margin-bottom:10px;}
+.choix-btn{display:block;width:100%;text-align:left;background:none;border:1px solid var(--border2);color:var(--texte-clair);font-family:var(--corps);font-size:14px;padding:11px 14px;margin-bottom:7px;cursor:pointer;transition:all 0.2s;line-height:1.5;border-radius:0;}
+.choix-btn:hover{background:rgba(204,34,0,0.12);border-color:var(--rouge);color:#fff;}
+.choix-btn:last-child{margin-bottom:0;}
+
+/* Zone input */
+.input-zone{display:flex;gap:8px;flex-shrink:0;}
+#input-joueur{flex:1;background:var(--bg2);border:none;border-bottom:2px solid var(--beton);color:var(--texte-clair);font-family:var(--corps);font-size:14px;padding:12px 14px;resize:none;height:52px;outline:none;transition:border-color 0.2s;}
+#input-joueur:focus{border-bottom-color:var(--rouge);}
+#input-joueur::placeholder{color:var(--texte-dim);font-style:italic;}
+#input-joueur:disabled{opacity:0.4;}
+#btn-envoyer{background:var(--rouge);border:none;color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:0 18px;cursor:pointer;transition:background 0.2s;flex-shrink:0;text-transform:uppercase;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%);}
+#btn-envoyer:hover{background:var(--rouge-vif);}
+#btn-envoyer:disabled{background:var(--beton);cursor:not-allowed;clip-path:none;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--beton);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--rouge-dim);}
+
+/* Mobile */
+@media(max-width:700px){
+  #app{padding:0 8px;}
+  .main{flex-direction:column;gap:8px;padding:8px 0;}
+  .empire-panel{width:100%;max-height:none;position:static;flex-direction:row;flex-wrap:wrap;gap:8px;overflow:visible;}
+  .empire-panel > div{min-width:140px;flex:1;}
+  #recit{min-height:260px;max-height:48vh;padding:14px;}
+  .entree p{font-size:14px;}
+  .logo{font-size:17px;}
+  .voie-grid,.profil-grid,.mode-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="studio-bar">
+  <a href="https://recitgames.vercel.app">&#9664; RÉCIT GAMES</a>
+</div>
+
+<!-- INTRO -->
+<div id="ecran-intro">
+  <div class="intro-inner">
+    <div class="intro-tag">New York · Empire criminel · Roman interactif</div>
+    <div class="intro-titre">Street<span>Empire</span></div>
+    <div class="intro-barre"></div>
+    <div class="intro-accroche">
+      Tu commences avec <strong>rien</strong>.<br>
+      La rue ou la mafia — tu choisis ta voie.<br>
+      Tu montes. Tu perds. Tu recommences.<br>
+      <strong>L'empire ne s'arrête jamais.</strong>
+    </div>
+    <div class="intro-btns">
+      <button class="btn-intro-p" onclick="afficherSetup()">Construire son empire</button>
+      <button class="btn-intro-s" id="btn-reprendre-intro" onclick="clicReprendre()">Reprendre</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div id="ecran-setup">
+  <div class="setup-wrap">
+    <div class="setup-titre">Street Empire</div>
+    <div class="setup-sous">Configuration — Récit Games</div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Clé API Anthropic</label>
+      <input class="setup-input" type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off"/>
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="se-souvenir"/>
+        <span class="checkbox-label">Se souvenir sur cet appareil</span>
+      </label>
+    </div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Ta voie</label>
+      <div class="voie-grid">
+        <div class="voie-carte" id="voie-rue" onclick="choisirVoie('rue')">
+          <div class="voie-tag">La rue</div>
+          <div class="voie-nom">Gang de rue</div>
+          <div class="voie-desc">Zero connexion. Zero argent. Tu construis depuis le bas. Brutal, immédiat, dangereux dès le départ.</div>
+        </div>
+        <div class="voie-carte" id="voie-mafia" onclick="choisirVoie('mafia')">
+          <div class="voie-tag">La famille</div>
+          <div class="voie-nom">Mafia italienne</div>
+          <div class="voie-desc">Tu entres comme homme de main. Protection relative. Ascension lente mais plus calculée. La trahison se paie cash.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Ton profil</label>
+      <div class="profil-grid">
+        <div class="profil-carte" id="profil-cerveau" onclick="choisirProfil('cerveau')">
+          <div class="profil-nom">Le Cerveau</div>
+          <div class="profil-stat">Stratégie · Influence</div>
+        </div>
+        <div class="profil-carte" id="profil-predateur" onclick="choisirProfil('predateur')">
+          <div class="profil-nom">Le Prédateur</div>
+          <div class="profil-stat">Réputation · Force</div>
+        </div>
+        <div class="profil-carte" id="profil-diplomate" onclick="choisirProfil('diplomate')">
+          <div class="profil-nom">Le Diplomate</div>
+          <div class="profil-stat">Réseau · Loyauté</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Ton surnom dans la rue</label>
+      <input class="setup-input" type="text" id="surnom-input" placeholder="Le surnom que la rue va retenir..." maxlength="20"/>
+    </div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Ton vrai prénom</label>
+      <input class="setup-input" type="text" id="prenom-input" placeholder="Prénom..." maxlength="20"/>
+    </div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Âge</label>
+      <div class="slider-wrap">
+        <input type="range" class="slider" id="age-slider" min="18" max="28" value="22"/>
+        <span class="slider-val" id="age-val">22</span>
+      </div>
+    </div>
+
+    <div class="setup-bloc">
+      <label class="setup-label">Mode d'interaction</label>
+      <div class="mode-grid">
+        <div class="mode-carte sel" id="mode-boutons" onclick="choisirMode('boutons')">
+          <div class="mode-nom">Boutons</div>
+          <div class="mode-desc">4 choix proposés</div>
+        </div>
+        <div class="mode-carte" id="mode-libre" onclick="choisirMode('libre')">
+          <div class="mode-nom">Texte libre</div>
+          <div class="mode-desc">Tu décides toi-même</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-setup" id="btn-lancer" onclick="lancerJeu()" disabled>Entrer dans l'empire</button>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--texte-dim);text-align:center;margin-top:12px;letter-spacing:1px;">Progression sauvegardée automatiquement</p>
+  </div>
+</div>
+
+<!-- REPRISE -->
+<div id="ecran-reprise">
+  <div class="reprise-box">
+    <div class="reprise-titre">Street Empire</div>
+    <div class="reprise-info" id="reprise-info"></div>
+    <div class="reprise-btns">
+      <button class="reprise-btn rbp" id="btn-continuer">Continuer</button>
+      <button class="reprise-btn rbn" id="btn-nouvelle">Nouvelle partie</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="logo">Street<span>Empire</span></div>
+    <div class="header-droite">
+      <div class="voie-tag-hdr" id="voie-tag">—</div>
+      <div class="sauv" id="sauv-ind">● prêt</div>
+    </div>
+  </header>
+  <div class="main">
+    <div class="empire-panel">
+
+      <div class="emp-bloc perso-bloc">
+        <div class="perso-surnom" id="p-surnom">—</div>
+        <div class="perso-voie" id="p-voie">—</div>
+        <div class="perso-saison" id="p-saison">Saison 1</div>
+      </div>
+
+      <div class="emp-bloc cash-display">
+        <div class="cash-montant" id="e-cash">$0</div>
+        <div class="cash-label">Cash disponible</div>
+      </div>
+
+      <div class="emp-bloc">
+        <div class="emp-titre">Personnel</div>
+        <div class="emp-ligne"><span class="emp-nom">Réputation</span><span class="emp-val" id="s-rep">10</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre" id="b-rep" style="width:10%"></div></div>
+        <div class="emp-ligne"><span class="emp-nom">Influence</span><span class="emp-val" id="s-inf">5</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre or" id="b-inf" style="width:5%"></div></div>
+        <div class="emp-ligne"><span class="emp-nom">Santé</span><span class="emp-val" id="s-san">100</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre verte" id="b-san" style="width:100%"></div></div>
+        <div class="emp-ligne"><span class="emp-nom">Exposition</span><span class="emp-val" id="s-exp">0</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre" id="b-exp" style="width:0%"></div></div>
+      </div>
+
+      <div class="emp-bloc">
+        <div class="emp-titre">Empire</div>
+        <div class="emp-ligne"><span class="emp-nom">Crew</span><span class="emp-val" id="e-crew">2</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre beton" id="b-crew" style="width:2%"></div></div>
+        <div class="emp-ligne"><span class="emp-nom">Loyauté</span><span class="emp-val" id="e-loy">60</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre or" id="b-loy" style="width:60%"></div></div>
+        <div class="emp-ligne"><span class="emp-nom">Territoire</span><span class="emp-val" id="e-ter">0</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre verte" id="b-ter" style="width:0%"></div></div>
+        <div class="emp-ligne"><span class="emp-nom">Blanchiment</span><span class="emp-val" id="e-bla">0%</span></div>
+        <div class="emp-barre-wrap"><div class="emp-barre or" id="b-bla" style="width:0%"></div></div>
+      </div>
+
+      <div class="emp-bloc">
+        <div class="emp-titre">Stock</div>
+        <div class="emp-ligne"><span class="emp-nom">Drogue</span><span class="emp-val" id="st-drogue">0</span></div>
+        <div class="emp-ligne"><span class="emp-nom">Armes</span><span class="emp-val" id="st-armes">0</span></div>
+        <div class="emp-ligne"><span class="emp-nom">Saison</span><span class="emp-val" id="st-saison">1</span></div>
+        <div class="emp-ligne"><span class="emp-nom">Lieu</span><span class="emp-val" id="st-lieu" style="font-size:9px;">New York</span></div>
+      </div>
+
+      <div class="emp-bloc">
+        <div class="emp-titre">Inventaire</div>
+        <div id="inv-liste"><div class="inv-vide">Vide</div></div>
+      </div>
+
+      <div class="emp-bloc" style="padding:10px 14px;">
+        <button class="btn-prem" onclick="window.location.href='https://buy.stripe.com/test_8x2bJ05fU1yV3uKde1bZe00'">
+          Premium — 7€/mois
+        </button>
+      </div>
+
+    </div>
+
+    <div class="jeu-panel">
+      <div id="recit"></div>
+      <div class="input-zone">
+        <textarea id="input-joueur" placeholder="Que fais-tu ?"></textarea>
+        <button id="btn-envoyer">Agir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const G = {
+  apiKey:'', voie:'', profil:'', surnom:'', prenom:'', age:22,
+  mode:'boutons', saison:1, lieu:'New York, Bronx', nbChoix:0,
+  inventaire:[], historique:[], saveTO:null,
+  cash:0,
+  perso:{ rep:10, inf:5, sante:100, exposition:0 },
+  empire:{ crew:2, loyaute:60, territoire:0, blanchiment:0, drogue:0, armes:0 }
+};
+const PAYWALL=20;
+
+// ── SETUP ──
+function afficherSetup(){
+  document.getElementById('ecran-intro').style.display='none';
+  document.getElementById('ecran-setup').style.display='block';
+  const k=localStorage.getItem('se_api_key');
+  if(k){document.getElementById('api-key').value=k;document.getElementById('se-souvenir').checked=true;}
+}
+function choisirVoie(v){
+  G.voie=v;
+  document.querySelectorAll('.voie-carte').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('voie-'+v).classList.add('sel');
+  verifierSetup();
+}
+function choisirProfil(p){
+  G.profil=p;
+  document.querySelectorAll('.profil-carte').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('profil-'+p).classList.add('sel');
+  verifierSetup();
+}
+function choisirMode(m){
+  G.mode=m;
+  document.querySelectorAll('.mode-carte').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('mode-'+m).classList.add('sel');
+  const inp=document.getElementById('input-joueur');
+  if(m==='boutons'){inp.style.display='none';}else{inp.style.display='flex';}
+}
+function verifierSetup(){
+  document.getElementById('btn-lancer').disabled=!(G.voie&&G.profil);
+}
+document.getElementById('age-slider').addEventListener('input',function(){
+  document.getElementById('age-val').textContent=this.value;
+});
+
+function lancerJeu(){
+  const k=document.getElementById('api-key').value.trim();
+  if(!k){alert('Entre ta clé API.');return;}
+  if(!G.voie){alert('Choisis ta voie.');return;}
+  if(!G.profil){alert('Choisis ton profil.');return;}
+  G.apiKey=k;
+  G.surnom=document.getElementById('surnom-input').value.trim()||'Ghost';
+  G.prenom=document.getElementById('prenom-input').value.trim()||'Marcus';
+  G.age=parseInt(document.getElementById('age-slider').value);
+  if(document.getElementById('se-souvenir').checked)localStorage.setItem('se_api_key',k);
+  // Initialiser stats selon profil
+  if(G.profil==='cerveau'){G.perso.inf=15;G.perso.rep=8;}
+  else if(G.profil==='predateur'){G.perso.rep=18;G.perso.inf=3;}
+  else{G.perso.rep=10;G.perso.inf=8;G.empire.loyaute=75;}
+  const save=charger();
+  if(save&&save.historique&&save.historique.length>0&&save.voie===G.voie){
+    fromSave(save);
+    document.getElementById('ecran-setup').style.display='none';
+    afficherReprise(save);return;
+  }
+  document.getElementById('ecran-setup').style.display='none';
+  // Mode boutons = cacher textarea
+  if(G.mode==='boutons')document.getElementById('input-joueur').style.display='none';
+  miseAJourUI();envoyerPremier();
+}
+function clicReprendre(){
+  const save=charger();
+  if(!save){afficherSetup();return;}
+  const k=localStorage.getItem('se_api_key');
+  if(k)G.apiKey=k;
+  document.getElementById('ecran-intro').style.display='none';
+  afficherSetup();
+  setTimeout(()=>{
+    if(save.voie)choisirVoie(save.voie);
+    if(save.profil)choisirProfil(save.profil);
+  },100);
+}
+function afficherReprise(save){
+  const d1=new Date(save.date),d2=new Date();
+  const h=Math.floor((d2-d1)/3600000),jr=Math.floor(h/24);
+  const abs=jr>0?`${jr}j`:h>0?`${h}h`:'Récent';
+  document.getElementById('reprise-info').innerHTML=`
+    <div class="reprise-ligne"><span class="reprise-cle">Surnom</span><span class="reprise-val">${save.surnom}</span></div>
+    <div class="reprise-ligne"><span class="reprise-cle">Voie</span><span class="reprise-val">${save.voie==='rue'?'Gang de rue':'Mafia'}</span></div>
+    <div class="reprise-ligne"><span class="reprise-cle">Cash</span><span class="reprise-val">$${(save.cash||0).toLocaleString()}</span></div>
+    <div class="reprise-ligne"><span class="reprise-cle">Saison</span><span class="reprise-val">${save.saison}</span></div>
+    <div class="reprise-ligne"><span class="reprise-cle">Absent</span><span class="reprise-val">${abs}</span></div>`;
+  document.getElementById('ecran-reprise').style.display='flex';
+  document.getElementById('btn-continuer').onclick=()=>{
+    document.getElementById('ecran-reprise').style.display='none';
+    if(G.mode==='boutons')document.getElementById('input-joueur').style.display='none';
+    miseAJourUI();
+    envoyerMessage(`Je reprends. Je suis ${G.surnom}, ${G.voie==='rue'?'gang de rue':'mafia italienne'}, Saison ${G.saison}, à ${G.lieu}. Cash : $${G.cash.toLocaleString()}. Crew : ${G.empire.crew} hommes. Résume la situation et propose mes options.`);
+  };
+  document.getElementById('btn-nouvelle').onclick=()=>{
+    reinitialiser();
+    document.getElementById('ecran-reprise').style.display='none';
+    if(G.mode==='boutons')document.getElementById('input-joueur').style.display='none';
+    miseAJourUI();envoyerPremier();
+  };
+}
+
+// ── SAVE ──
+function sauvegarder(){
+  const d={voie:G.voie,profil:G.profil,surnom:G.surnom,prenom:G.prenom,age:G.age,mode:G.mode,
+    saison:G.saison,lieu:G.lieu,nbChoix:G.nbChoix,cash:G.cash,
+    perso:G.perso,empire:G.empire,inventaire:G.inventaire,
+    historique:G.historique.slice(-20),date:new Date().toISOString()};
+  localStorage.setItem('street_empire_save',JSON.stringify(d));
+}
+function charger(){
+  const d=localStorage.getItem('street_empire_save');
+  if(!d)return null;try{return JSON.parse(d);}catch(e){return null;}
+}
+function fromSave(s){
+  G.voie=s.voie;G.profil=s.profil;G.surnom=s.surnom;G.prenom=s.prenom;
+  G.age=s.age;G.mode=s.mode||'boutons';G.saison=s.saison;G.lieu=s.lieu;
+  G.nbChoix=s.nbChoix||0;G.cash=s.cash||0;
+  G.perso=s.perso||G.perso;G.empire=s.empire||G.empire;
+  G.inventaire=s.inventaire||[];G.historique=s.historique||[];
+}
+function reinitialiser(){
+  G.saison=1;G.lieu='New York, Bronx';G.nbChoix=0;G.cash=0;
+  G.inventaire=[];G.historique=[];
+  G.perso={rep:10,inf:5,sante:100,exposition:0};
+  G.empire={crew:2,loyaute:60,territoire:0,blanchiment:0,drogue:0,armes:0};
+  if(G.profil==='cerveau'){G.perso.inf=15;G.perso.rep=8;}
+  else if(G.profil==='predateur'){G.perso.rep=18;G.perso.inf=3;}
+  else{G.perso.rep=10;G.perso.inf=8;G.empire.loyaute=75;}
+}
+function autoSave(){
+  if(G.saveTO)clearTimeout(G.saveTO);
+  setSI('en-cours');
+  G.saveTO=setTimeout(()=>{sauvegarder();setSI('ok');setTimeout(()=>setSI(''),2000);},500);
+}
+function setSI(e){
+  const el=document.getElementById('sauv-ind');
+  el.className='sauv'+(e?' '+e:'');
+  el.textContent=e==='en-cours'?'↑ sauvegarde...':e==='ok'?'✓ sauvegardé':'● prêt';
+}
+
+// ── UI ──
+function miseAJourUI(){
+  document.getElementById('voie-tag').textContent=G.voie==='rue'?'Gang de rue':'Mafia';
+  document.getElementById('p-surnom').textContent=G.surnom||'—';
+  document.getElementById('p-voie').textContent=G.voie==='rue'?'Gang · New York':'Mafia · Brooklyn';
+  document.getElementById('p-saison').textContent='Saison '+G.saison;
+  document.getElementById('e-cash').textContent='$'+(G.cash||0).toLocaleString();
+  // Perso
+  const p=G.perso;
+  document.getElementById('s-rep').textContent=p.rep;document.getElementById('b-rep').style.width=Math.min(100,p.rep)+'%';
+  document.getElementById('s-inf').textContent=p.inf;document.getElementById('b-inf').style.width=Math.min(100,p.inf)+'%';
+  document.getElementById('s-san').textContent=p.sante;document.getElementById('b-san').style.width=p.sante+'%';
+  document.getElementById('b-san').style.background=p.sante>50?'var(--vert)':p.sante>25?'var(--or)':'var(--rouge)';
+  document.getElementById('s-exp').textContent=p.exposition;document.getElementById('b-exp').style.width=Math.min(100,p.exposition)+'%';
+  document.getElementById('b-exp').style.background=p.exposition>70?'var(--rouge-vif)':p.exposition>40?'var(--or)':'var(--beton-clair)';
+  // Empire
+  const e=G.empire;
+  document.getElementById('e-crew').textContent=e.crew;document.getElementById('b-crew').style.width=Math.min(100,e.crew)+'%';
+  document.getElementById('e-loy').textContent=e.loyaute;document.getElementById('b-loy').style.width=e.loyaute+'%';
+  document.getElementById('e-ter').textContent=e.territoire;document.getElementById('b-ter').style.width=Math.min(100,e.territoire*10)+'%';
+  document.getElementById('e-bla').textContent=e.blanchiment+'%';document.getElementById('b-bla').style.width=e.blanchiment+'%';
+  document.getElementById('st-drogue').textContent=e.drogue;
+  document.getElementById('st-armes').textContent=e.armes;
+  document.getElementById('st-saison').textContent=G.saison;
+  document.getElementById('st-lieu').textContent=G.lieu;
+  // Inventaire
+  const invEl=document.getElementById('inv-liste');
+  if(G.inventaire.length){invEl.innerHTML=G.inventaire.map(it=>`<div class="inv-item">▸ ${it}</div>`).join('');}
+  else{invEl.innerHTML='<div class="inv-vide">Vide</div>';}
+}
+
+// ── SYSTEM PROMPT ──
+function construireSP(){
+  const p=G.perso,e=G.empire;
+  const voieLabel=G.voie==='rue'?'Gang de rue — Bronx/Harlem':'Mafia italienne — Brooklyn/Queens';
+  const profilDesc=G.profil==='cerveau'?'Cerveau — stratège, calcule tout, parle peu':G.profil==='predateur'?'Prédateur — instinctif, violent quand nécessaire, redouté':'Diplomate — fait des alliances, réseau fort, fait confiance parfois trop vite';
+  return `=== STREET EMPIRE — CONTEUR ===
+Tu es le Conteur de Street Empire. Tu es un auteur, pas un assistant. Tu ne sors JAMAIS du personnage. Tu réponds TOUJOURS en français. Deuxième personne : "tu vois", "tu décides", "tu prends le risque".
+
+=== VOIX LITTÉRAIRE ===
+Tu écris comme The Wire parle — direct, sans fioritures, avec la musique de la rue. Pas de romanisation de la violence. Pas de héros. Des hommes qui font des choix dans des situations impossibles.
+Pour l'ascension et la stratégie, tu t'inspires du Parrain — chaque décision semble logique sur le moment, c'est l'accumulation qui devient irréversible.
+Prose sèche, rythmée, précise. Chaque détail compte. Jamais de glamour.
+
+RÈGLES D'ÉCRITURE STRICTES :
+- Nommer toujours les rues, quartiers, lieux précis de New York. Jamais "une rue" — toujours "le coin de Fordham Road et Grand Concourse, sous l'autoroute".
+- Chaque personnage secondaire a une voix distincte, un accent, une façon de parler qui lui appartient.
+- Mots INTERDITS : "soudain", "immédiatement", "incroyable", "impressionnant".
+- La violence a un coût dans la narration — elle laisse des traces, des témoins, des conséquences.
+
+=== PERSONNAGE ===
+Surnom : ${G.surnom} | Vrai prénom : ${G.prenom} | Âge : ${G.age} ans
+Voie : ${voieLabel}
+Profil : ${profilDesc}
+Saison : ${G.saison} | Lieu actuel : ${G.lieu}
+Nombre de choix : ${G.nbChoix}
+
+=== STATS PERSONNELLES ===
+Réputation : ${p.rep}/100 — ce que la rue pense de toi. Monte par les victoires visibles, baisse par les humiliations.
+Influence : ${p.inf}/100 — connexions, flics corrompus, politiciens. Monte lentement, baisse vite si exposé.
+Santé : ${p.sante}/100 — physique et mentale. Blessures = options bloquées.
+Exposition : ${p.exposition}/100 — ce que les flics savent. À 80 : surveillance active. À 100 : arrestation imminente.
+
+=== STATS EMPIRE ===
+Cash disponible : $${G.cash.toLocaleString()}
+Crew : ${e.crew} hommes actifs
+Loyauté du crew : ${e.loyaute}/100
+Territoire contrôlé : ${e.territoire} zones
+Blanchiment : ${e.blanchiment}%
+Stock drogue : ${e.drogue} unités
+Stock armes : ${e.armes} unités
+Inventaire : ${G.inventaire.length?G.inventaire.join(', '):'Vide'}
+
+=== MÉCANIQUE ÉCONOMIQUE ===
+Le cash fluctue en permanence. Chaque opération a un coût et un gain potentiel.
+Les deals de drogue : achat en gros, revente au détail. Marge variable selon qualité et zone.
+Les armes : marges plus élevées, risque d'exposition plus fort.
+Payer le crew : ${e.crew} hommes × coût hebdomadaire. Si cash trop bas → loyauté chute.
+Format cash : [ Cash +$X ] ou [ Cash -$X ] à chaque transaction.
+Format stock : [ Drogue +X ] [ Drogue -X ] [ Armes +X ] [ Armes -X ]
+
+=== RÈGLES ABSOLUES SUR LES CONSÉQUENCES ===
+Ce jeu ne fait AUCUN cadeau. Ces règles sont non négociables.
+
+RÈGLE 1 — L'IA NE PROTÈGE JAMAIS LE JOUEUR.
+Si le choix est mauvais, les conséquences arrivent. Pas d'échappatoire. Pas de "heureusement".
+
+RÈGLE 2 — CONSÉQUENCES NARRATIVES IRRÉVERSIBLES.
+Un témoin repéré existe et peut parler à la police.
+Une trahison dans le crew change les relations pour plusieurs scènes.
+Un mort reste mort — personnage secondaire ou pas.
+Une zone perdue doit être reconquise — elle ne revient pas seule.
+Une arrestation = scène de prison avec vraies conséquences sur l'empire.
+
+RÈGLE 3 — STATS : PERTES PLUS GRANDES QUE GAINS.
+Erreur grave → minimum -20 sur la stat concernée.
+Bonne décision → +8 à +12 maximum.
+L'exposition monte facilement, baisse difficilement.
+
+RÈGLE 4 — PRISON ET MORT SONT RÉELLES.
+Prison : le joueur perd du temps, du territoire, de l'argent. Le crew se réorganise sans lui.
+Mort : possible après une série de mauvais choix. Game Over narratif.
+Blessure grave : options physiques bloquées pendant plusieurs scènes.
+
+RÈGLE 5 — LE CASH EST VITAL.
+Cash à zéro = crew non payé = loyauté qui s'effondre = trahisons en cascade. Narre cette spirale sans pitié.
+
+RÈGLE 6 — LES BONS CHOIX NE SONT PAS ÉVIDENTS.
+Ce qui semble sûr peut être un piège. Ce qui semble risqué peut payer énorme.
+
+=== FORMAT OBLIGATOIRE ===
+Narration (120-200 mots, style The Wire)
+
+[ Cash ±$X ] [ Réputation ±X ] [ Exposition ±X ] etc. si pertinent
+
+${G.mode==='boutons'?`[ CHOIX ]
+1 — option
+2 — option
+3 — option
+4 — option`:'Termine par une question ouverte sur ce que le joueur veut faire.'}
+
+=== RÈGLES SUR LES CHOIX ===
+INTERDIT de proposer un choix utilisant argent ou stock absent.
+Chaque choix reflète QUI est le personnage — pas juste la situation.
+${G.mode==='boutons'?'Maximum 4 choix. Jamais de bonne réponse évidente.':'Le joueur écrit librement ce qu\'il fait.'}
+
+=== PAYWALL ===
+Quand nbChoix atteint ${PAYWALL}, insère : [ PAYWALL ]`.trim();
+}
+
+// ── PARSING ──
+function parserReponse(texte){
+  const mises=[];
+
+  // Cash
+  texte=texte.replace(/\[\s*Cash\s*\+\s*\$?([\d,]+)\s*\]/gi,(_,v)=>{
+    const n=parseInt(v.replace(/,/g,''));G.cash+=n;mises.push(`[Cash +$${n.toLocaleString()}]`);return '';
+  });
+  texte=texte.replace(/\[\s*Cash\s*-\s*\$?([\d,]+)\s*\]/gi,(_,v)=>{
+    const n=parseInt(v.replace(/,/g,''));G.cash=Math.max(0,G.cash-n);mises.push(`[Cash -$${n.toLocaleString()}]`);return '';
+  });
+
+  // Réputation
+  texte=texte.replace(/\[\s*R[ée]putation\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.perso.rep=Math.max(0,Math.min(100,G.perso.rep+(op==='-'?-n:n)));
+    mises.push(`[Rép${op}${n}]`);return '';
+  });
+  // Influence
+  texte=texte.replace(/\[\s*Influence\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.perso.inf=Math.max(0,Math.min(100,G.perso.inf+(op==='-'?-n:n)));
+    mises.push(`[Inf${op}${n}]`);return '';
+  });
+  // Santé
+  texte=texte.replace(/\[\s*Sant[ée]\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.perso.sante=Math.max(0,Math.min(100,G.perso.sante+(op==='-'?-n:n)));
+    mises.push(`[Santé${op}${n}]`);return '';
+    if(G.perso.sante<=0)setTimeout(()=>triggerMort(),500);
+  });
+  // Exposition
+  texte=texte.replace(/\[\s*Exposition\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.perso.exposition=Math.max(0,Math.min(100,G.perso.exposition+(op==='-'?-n:n)));
+    mises.push(`[Expo${op}${n}]`);
+    if(G.perso.exposition>=100)setTimeout(()=>triggerArrestation(),500);
+    return '';
+  });
+  // Crew
+  texte=texte.replace(/\[\s*Crew\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.empire.crew=Math.max(0,G.empire.crew+(op==='-'?-n:n));
+    mises.push(`[Crew${op}${n}]`);return '';
+  });
+  // Loyauté
+  texte=texte.replace(/\[\s*Loyaut[eé]\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.empire.loyaute=Math.max(0,Math.min(100,G.empire.loyaute+(op==='-'?-n:n)));
+    mises.push(`[Loyauté${op}${n}]`);return '';
+  });
+  // Territoire
+  texte=texte.replace(/\[\s*Territoire\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.empire.territoire=Math.max(0,G.empire.territoire+(op==='-'?-n:n));
+    mises.push(`[Terr${op}${n}]`);return '';
+  });
+  // Blanchiment
+  texte=texte.replace(/\[\s*Blanchiment\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.empire.blanchiment=Math.max(0,Math.min(100,G.empire.blanchiment+(op==='-'?-n:n)));
+    mises.push(`[Blanch${op}${n}%]`);return '';
+  });
+  // Stock
+  texte=texte.replace(/\[\s*Drogue\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.empire.drogue=Math.max(0,G.empire.drogue+(op==='-'?-n:n));
+    mises.push(`[Drogue${op}${n}]`);return '';
+  });
+  texte=texte.replace(/\[\s*Armes\s*([+\-])(\d+)\s*\]/gi,(_,op,v)=>{
+    const n=parseInt(v);G.empire.armes=Math.max(0,G.empire.armes+(op==='-'?-n:n));
+    mises.push(`[Armes${op}${n}]`);return '';
+  });
+  // Saison
+  texte=texte.replace(/\[\s*Saison\s*(\d+)\s*\]/gi,(_,n)=>{G.saison=parseInt(n);mises.push(`[Saison ${n}]`);return '';});
+  // Lieu
+  texte=texte.replace(/\[\s*Lieu\s*:\s*([^\]]+)\s*\]/gi,(_,l)=>{G.lieu=l.trim();mises.push(`[${l.trim()}]`);return '';});
+  // Inventaire ajout
+  texte=texte.replace(/\[\s*([^\]]+?)\s*ajoutée?s?\s*à\s*l['']inventaire\s*\]/gi,(_,it)=>{
+    const item=it.trim();if(!G.inventaire.includes(item))G.inventaire.push(item);
+    mises.push(`[${item}→inv]`);return '';
+  });
+  // Inventaire retrait
+  texte=texte.replace(/\[\s*([^\]]+?)\s*retiré[e]?\s*de\s*l['']inventaire\s*\]/gi,(_,it)=>{
+    G.inventaire=G.inventaire.filter(i=>i.toLowerCase()!==it.trim().toLowerCase());
+    mises.push(`[${it.trim()}✗]`);return '';
+  });
+  // Paywall
+  if(/\[\s*PAYWALL\s*\]/i.test(texte)){
+    texte=texte.replace(/\[\s*PAYWALL\s*\]/gi,'');
+    setTimeout(declencherPaywall,600);
+  }
+  // Choix
+  let htmlChoix='';
+  const mChoix=texte.match(/\[\s*CHOIX\s*\]([\s\S]*?)(?=\n\n|\n\[|$)/i);
+  if(mChoix){
+    texte=texte.replace(mChoix[0],'').trim();
+    const lignes=mChoix[0].split('\n').filter(l=>/^\d[\s—\-]/.test(l.trim()));
+    if(lignes.length){
+      window._choix=lignes.map(l=>l.replace(/^\d\s*[—\-]\s*/,'').trim());
+      htmlChoix='<div class="choix-bloc"><div class="choix-titre">Que fais-tu ?</div>'+
+        window._choix.map((t,i)=>`<button class="choix-btn" onclick="envoyerChoix(${i})">${lignes[i].trim()}</button>`).join('')+
+        '</div>';
+    }
+  }
+  miseAJourUI();
+  const ps=texte.trim().split(/\n+/).filter(l=>l.trim()).map(l=>`<p>${l.trim()}</p>`).join('');
+  const su=mises.length?`<div class="maj-stats">${mises.join('  ')}</div>`:'';
+  return ps+su+htmlChoix;
+}
+
+// ── ÉVÉNEMENTS SPÉCIAUX ──
+function triggerArrestation(){
+  const cashPerdu=Math.floor(G.cash*0.4);
+  const crewPerdu=Math.floor(G.empire.crew*0.3);
+  G.cash=Math.max(0,G.cash-cashPerdu);
+  G.empire.crew=Math.max(1,G.empire.crew-crewPerdu);
+  G.empire.loyaute=Math.max(0,G.empire.loyaute-20);
+  G.perso.exposition=20;
+  ajouterRecit(`<div style="border-left:3px solid var(--rouge);padding-left:14px;margin:8px 0;">
+    <p style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--rouge);text-transform:uppercase;">— Arrestation —</p>
+    <p>Le NYPD t'embarque. L'exposition a atteint son maximum. Tu passes en garde à vue. L'empire continue sans toi — pas toujours dans la bonne direction.</p>
+    <p style="font-family:var(--mono);font-size:11px;color:var(--or);">[ Cash -$${cashPerdu.toLocaleString()} ] [ Crew -${crewPerdu} ] [ Loyauté -20 ] [ Exposition réinitialisée ]</p>
+  </div>`);
+  miseAJourUI();autoSave();
+}
+function triggerMort(){
+  ajouterRecit(`<div style="border-left:3px solid var(--rouge-vif);padding-left:14px;margin:8px 0;">
+    <p style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--rouge-vif);text-transform:uppercase;">— Fin —</p>
+    <p>La rue t'a eu. C'est comme ça que ça finit pour la plupart. Pas avec des discours. Juste une nuit de trop, un mauvais choix de trop.</p>
+    <button onclick="location.reload()" style="margin-top:12px;background:var(--rouge);border:none;color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:10px 20px;cursor:pointer;text-transform:uppercase;">Recommencer</button>
+  </div>`);
+  document.getElementById('btn-envoyer').disabled=true;
+  document.getElementById('input-joueur').disabled=true;
+}
+function declencherPaywall(){
+  ajouterRecit(`<div style="border-left:3px solid var(--rouge);padding-left:14px;margin:8px 0;">
+    <p style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--rouge);text-transform:uppercase;">— Accès limité —</p>
+    <p>Tu as atteint la limite gratuite de Street Empire. Pour continuer à construire ton empire, passe à l'abonnement Récit Games.</p>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="window.location.href='https://buy.stripe.com/test_8x2bJ05fU1yV3uKde1bZe00'" style="background:var(--rouge);border:none;color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:11px 20px;cursor:pointer;text-transform:uppercase;">S'abonner — 7€/mois</button>
+      <button onclick="saisirCode()" style="background:none;border:1px solid var(--beton);color:var(--texte-dim);font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:11px 20px;cursor:pointer;text-transform:uppercase;">J'ai un code</button>
+    </div>
+  </div>`);
+  document.getElementById('btn-envoyer').disabled=true;
+  document.getElementById('input-joueur').disabled=true;
+}
+function saisirCode(){
+  const code=prompt('Entre ton code abonnement Récit Games :');
+  if(!code)return;
+  fetch('https://recitgames-api.vercel.app/api/verify-code',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({code:code.trim().toUpperCase()})
+  }).then(r=>r.json()).then(data=>{
+    if(data.valid){
+      G.nbChoix=0;
+      document.getElementById('btn-envoyer').disabled=false;
+      document.getElementById('input-joueur').disabled=false;
+      ajouterRecit('<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ Code validé. L\'empire continue.</p>');
+    }else{alert('Code invalide.');}
+  }).catch(()=>alert('Erreur de vérification.'));
+}
+
+// ── STREAMING ──
+async function streamerMessage(msg){
+  G.historique.push({role:'user',content:msg});
+  const recit=document.getElementById('recit');
+  const entree=document.createElement('div');entree.className='entree';
+  recit.appendChild(entree);
+  recit.scrollTop=entree.offsetTop-20;
+  const sp=document.createElement('p');entree.appendChild(sp);
+  const cur=document.createElement('span');cur.className='curseur';sp.appendChild(cur);
+  let full='';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':G.apiKey.replace(/[^\x20-\x7E]/g,'').trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,stream:true,system:construireSP(),messages:G.historique})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Erreur ${res.status}`);}
+    const reader=res.body.getReader();const dec=new TextDecoder('utf-8',{fatal:false});
+    let buffer='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buffer+=dec.decode(value,{stream:true});
+      const lignes=buffer.split('\n');buffer=lignes.pop();
+      for(const ligne of lignes){
+        if(!ligne.startsWith('data: '))continue;
+        const d=ligne.slice(6).trim();if(d==='[DONE]')continue;
+        try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text){full+=p.delta.text;sp.textContent=full;sp.appendChild(cur);}}catch(e){}
+      }
+    }
+    cur.remove();
+    G.historique.push({role:'assistant',content:full});
+    if(G.historique.length>20)G.historique=G.historique.slice(-20);
+    entree.innerHTML=parserReponse(full);
+    autoSave();
+  }catch(err){
+    cur.remove();
+    entree.innerHTML=`<p style="color:var(--rouge-vif);font-family:var(--mono);font-size:12px;">Erreur : ${err.message}</p>`;
+  }
+}
+function ajouterRecit(html){
+  const recit=document.getElementById('recit');
+  const e=document.createElement('div');e.className='entree';e.innerHTML=html;
+  recit.appendChild(e);recit.scrollTop=recit.scrollHeight;
+}
+async function envoyerMessage(msg){
+  if(!msg.trim())return;
+  const btn=document.getElementById('btn-envoyer');
+  const inp=document.getElementById('input-joueur');
+  btn.disabled=true;inp.disabled=true;
+  const recit=document.getElementById('recit');
+  if(recit.children.length>0){
+    const sep=document.createElement('div');sep.className='entree';
+    sep.innerHTML='<hr class="sep"/>';recit.appendChild(sep);
+  }
+  ajouterRecit(`<div class="action-joueur">▸ ${msg}</div>`);
+  inp.value='';G.nbChoix++;
+  await streamerMessage(msg);
+  btn.disabled=false;
+  if(G.mode!=='boutons')inp.disabled=false;
+  if(window.innerWidth>700&&G.mode!=='boutons')inp.focus();
+}
+function envoyerChoix(i){const t=window._choix&&window._choix[i];if(t)envoyerMessage(t);}
+async function envoyerPremier(){
+  const voieDesc=G.voie==='rue'
+    ?`Je commence Street Empire. Je suis ${G.surnom}, ${G.age} ans, Bronx. Gang de rue. Profil : ${G.profil}. Cash : $0. Crew : 2 hommes. Je pars de rien. Commence la Saison 1, scène d'introduction.`
+    :`Je commence Street Empire. Je suis ${G.surnom}, ${G.age} ans, Brooklyn. Homme de main dans une famille italienne. Profil : ${G.profil}. Cash : $0. Je suis en bas. Je commence. Saison 1, scène d'introduction.`;
+  miseAJourUI();
+  await streamerMessage(voieDesc);
+}
+
+// ── EVENTS ──
+document.getElementById('btn-envoyer').addEventListener('click',()=>{envoyerMessage(document.getElementById('input-joueur').value);});
+document.getElementById('input-joueur').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();envoyerMessage(e.target.value);}});
+// Cache textarea si mode boutons par défaut
+document.getElementById('input-joueur').style.display='none';
+
+window.addEventListener('load',()=>{
+  const save=charger();
+  if(save&&save.historique&&save.historique.length>0){
+    document.getElementById('btn-reprendre-intro').style.display='block';
+  }
+});
+</script>
+</body>
+</html>
