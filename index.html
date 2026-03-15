@@ -168,9 +168,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .btn-prem:hover{opacity:0.85;}
 
 /* ── PANNEAU JEU ── */
-.jeu-panel{flex:1;display:flex;flex-direction:column;min-width:0;gap:10px;}
-#recit{flex:1;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--rouge-dim);padding:22px;overflow-y:auto;min-height:0;font-family:var(--corps);}
-.entree{margin-bottom:20px;animation:fadeIn 0.35s ease;}
+.jeu-panel{flex:1;display:flex;flex-direction:column;min-width:0;gap:10px;position:relative;z-index:5;}
+#recit{flex:1;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--rouge-dim);padding:22px;overflow-y:auto;min-height:0;font-family:var(--corps);position:relative;z-index:5;}
+.entree{margin-bottom:20px;animation:fadeIn 0.35s ease;position:relative;z-index:5;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 .entree p{font-size:15px;line-height:1.9;color:var(--texte-clair);margin-bottom:10px;}
 .action-joueur{font-family:var(--mono);font-size:11px;color:var(--texte-dim);padding:7px 12px;border-left:3px solid var(--rouge-dim);margin-bottom:12px;letter-spacing:0.5px;background:rgba(204,34,0,0.04);}
@@ -187,7 +187,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .choix-btn:last-child{margin-bottom:0;}
 
 /* Zone input */
-.input-zone{display:flex;gap:8px;flex-shrink:0;}
+.input-zone{display:flex;gap:8px;flex-shrink:0;position:relative;z-index:5;}
 #input-joueur{flex:1;background:var(--bg2);border:none;border-bottom:2px solid var(--beton);color:var(--texte-clair);font-family:var(--corps);font-size:14px;padding:12px 14px;resize:none;height:52px;outline:none;transition:border-color 0.2s;}
 #input-joueur:focus{border-bottom-color:var(--rouge);}
 #input-joueur::placeholder{color:var(--texte-dim);font-style:italic;}
