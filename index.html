@@ -418,7 +418,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 
 <script>
 const G = {
-  apiKey:'', voie:'', profil:'', surnom:'', prenom:'', age:22,
+  apiKey:'', voie:'', profil:'', surnom:'', prenom:'', age:22, adminMode:false,
   mode:'boutons', saison:1, lieu:'New York, Bronx', nbChoix:0,
   inventaire:[], historique:[], saveTO:null,
   cash:0,
@@ -770,7 +770,7 @@ function parserReponse(texte){
     mises.push(`[${it.trim()}✗]`);return '';
   });
   // Paywall
-  if(/\[\s*PAYWALL\s*\]/i.test(texte)){
+  if(!G.adminMode&&/\[\s*PAYWALL\s*\]/i.test(texte)){
     texte=texte.replace(/\[\s*PAYWALL\s*\]/gi,'');
     setTimeout(declencherPaywall,600);
   }
@@ -837,10 +837,17 @@ function saisirCode(){
     body:JSON.stringify({code:code.trim().toUpperCase()})
   }).then(r=>r.json()).then(data=>{
     if(data.valid){
-      G.nbChoix=0;
-      document.getElementById('btn-envoyer').disabled=false;
-      document.getElementById('input-joueur').disabled=false;
-      ajouterRecit('<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ Code validé. L\'empire continue.</p>');
+      if(data.admin){
+        G.nbChoix=0;G.adminMode=true;
+        document.getElementById('btn-envoyer').disabled=false;
+        document.getElementById('input-joueur').disabled=false;
+        ajouterRecit('<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ Accès admin activé. Aucune limite.</p>');
+      }else{
+        G.nbChoix=0;
+        document.getElementById('btn-envoyer').disabled=false;
+        document.getElementById('input-joueur').disabled=false;
+        ajouterRecit('<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ Code validé. L'empire continue.</p>');
+      }
     }else{alert('Code invalide.');}
   }).catch(()=>alert('Erreur de vérification.'));
 }
@@ -901,7 +908,7 @@ async function envoyerMessage(msg){
     sep.innerHTML='<hr class="sep"/>';recit.appendChild(sep);
   }
   ajouterRecit(`<div class="action-joueur">▸ ${msg}</div>`);
-  inp.value='';G.nbChoix++;
+  inp.value='';if(!G.adminMode)G.nbChoix++;
   await streamerMessage(msg);
   btn.disabled=false;
   if(G.mode!=='boutons')inp.disabled=false;
