@@ -139,8 +139,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .main{display:flex;flex:1;gap:14px;padding:14px 0;min-height:0;}
 
 /* ── PANNEAU EMPIRE ── */
-.empire-panel{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:calc(100vh - 80px);position:sticky;top:0;}
-.emp-bloc{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--rouge-dim);padding:12px 14px;}
+.empire-panel{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:calc(100vh - 80px);position:sticky;top:0;z-index:5;}
+.emp-bloc{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--rouge-dim);padding:12px 14px;position:relative;z-index:5;}
 .emp-titre{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rouge);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 .emp-ligne{display:flex;justify-content:space-between;align-items:center;padding:3px 0;}
 .emp-nom{font-family:var(--mono);font-size:10px;color:var(--texte-dim);}
@@ -357,7 +357,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
       </div>
 
       <div class="emp-bloc cash-display">
-        <div class="cash-montant" id="e-cash">$0</div>
+        <div class="cash-montant" id="e-cash" style="color:#c8a040;font-size:28px;font-family:'Barlow Condensed',sans-serif;font-weight:700;">$0</div>
         <div class="cash-label">Cash disponible</div>
       </div>
 
