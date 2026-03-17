@@ -512,7 +512,22 @@ function afficherReprise(save){
     document.getElementById('ecran-reprise').style.display='none';
     if(G.mode==='boutons')document.getElementById('input-joueur').style.display='none';
     miseAJourUI();
-    envoyerMessage(`Je reprends. Je suis ${G.surnom}, ${G.voie==='rue'?'gang de rue':'mafia italienne'}, Saison ${G.saison}, à ${G.lieu}. Cash : $${G.cash.toLocaleString()}. Crew : ${G.empire.crew} hommes. Résume la situation et propose mes options.`);
+    // Calcul du temps d'absence pour le message de reprise
+    const d1=new Date(save.date), d2=new Date();
+    const heuresAbsence = (d2-d1)/3600000;
+    let msgReprise;
+    if(heuresAbsence < 0.1) {
+      // Moins de 6 minutes — reprise immédiate sans évolution du monde
+      msgReprise = `Je reprends exactement là où j'en étais. Je suis ${G.surnom}, ${G.voie==='rue'?'gang de rue':'mafia italienne'}, Saison ${G.saison}, à ${G.lieu}. Cash : $${G.cash.toLocaleString()}. Crew : ${G.empire.crew} hommes. Reprends exactement la même scène et propose mes choix.`;
+    } else if(heuresAbsence <= 3) {
+      // Entre 6 minutes et 3 heures — le monde a légèrement évolué
+      const h = Math.round(heuresAbsence * 10) / 10;
+      msgReprise = `Je reviens après ${h < 1 ? Math.round(heuresAbsence*60)+'min' : h.toFixed(1)+'h' } d'absence. Je suis ${G.surnom}, ${G.voie==='rue'?'gang de rue':'mafia italienne'}, Saison ${G.saison}, à ${G.lieu}. Cash : $${G.cash.toLocaleString()}. Crew : ${G.empire.crew} hommes. RÈGLE ABSOLUE : je reprends exactement là où j'en étais — même scène, même position, aucune action faite à ma place. Le monde autour peut avoir légèrement évolué (tensions, rumeurs, mouvements) mais je n'ai pas bougé. Décris brièvement ce qui s'est passé autour sans me faire agir, puis propose mes choix.`;
+    } else {
+      // Plus de 3 heures — temps figé, joueur reprend comme si c'était immédiat
+      msgReprise = `Je reprends. Je suis ${G.surnom}, ${G.voie==='rue'?'gang de rue':'mafia italienne'}, Saison ${G.saison}, à ${G.lieu}. Cash : $${G.cash.toLocaleString()}. Crew : ${G.empire.crew} hommes. RÈGLE ABSOLUE : je reprends exactement là où j'en étais — même scène, même position, aucune décision n'a été prise à ma place. Résume la situation et propose mes choix.`;
+    }
+    envoyerMessage(msgReprise);
   };
   document.getElementById('btn-nouvelle').onclick=()=>{
     reinitialiser();
@@ -686,6 +701,26 @@ ${G.mode==='boutons'?`[ CHOIX ]
 INTERDIT de proposer un choix utilisant argent ou stock absent.
 Chaque choix reflète QUI est le personnage — pas juste la situation.
 ${G.mode==='boutons'?'Maximum 4 choix. Jamais de bonne réponse évidente.':'Le joueur écrit librement ce qu il fait.'}
+
+=== COHÉRENCE NARRATIVE — RÈGLE FONDAMENTALE ===
+L'IA NE CHERCHE PAS À ÊTRE CRÉATIVE. Elle cherche à être LOGIQUE.
+
+RÈGLE A — CAUSALITÉ STRICTE :
+Chaque événement est la conséquence d'un choix du joueur ou d'un état existant du monde.
+Interdit : événements sortis de nulle part, rebonds absurdes, coups de chance inexpliqués.
+Interdit : twists gratuits qui n'ont pas de cause dans l'histoire jouée.
+
+RÈGLE B — MÉMOIRE ABSOLUE :
+L'IA se souvient de tout ce qui s'est passé dans la session. Aucun personnage ne change d'attitude sans raison. Aucun fait établi ne disparaît. Aucun territoire ne change de main sans action narrative.
+
+RÈGLE C — TON CONSTANT :
+Pas de changement de ton injustifié. Si la situation est tendue, elle reste tendue jusqu'à résolution. Pas d'humour déplacé, pas d'allègement artificiel.
+
+RÈGLE D — POSITION DU JOUEUR FIGÉE :
+Le joueur reprend exactement où il était. Aucune action n'est faite à sa place. Aucun saut narratif imposé. Le joueur reste le point fixe — le monde évolue autour de lui, pas à la place de lui.
+
+RÈGLE E — MONDE SEMI-ACTIF :
+Si le joueur était absent moins de 3h, le monde a légèrement évolué (tensions, mouvements de rue, rumeurs). Au-delà de 3h : le monde est figé au moment de la sauvegarde. Dans tous les cas : le joueur n'a pas bougé, aucune décision n'a été prise pour lui.
 
 === PAYWALL ===
 Quand nbChoix atteint ${PAYWALL}, insère : [ PAYWALL ]`.trim();
