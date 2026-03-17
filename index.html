@@ -685,7 +685,7 @@ ${G.mode==='boutons'?`[ CHOIX ]
 === RÈGLES SUR LES CHOIX ===
 INTERDIT de proposer un choix utilisant argent ou stock absent.
 Chaque choix reflète QUI est le personnage — pas juste la situation.
-${G.mode==='boutons'?'Maximum 4 choix. Jamais de bonne réponse évidente.':'Le joueur écrit librement ce qu\'il fait.'}
+${G.mode==='boutons'?'Maximum 4 choix. Jamais de bonne réponse évidente.':'Le joueur écrit librement ce qu il fait.'}
 
 === PAYWALL ===
 Quand nbChoix atteint ${PAYWALL}, insère : [ PAYWALL ]`.trim();
@@ -846,7 +846,7 @@ function saisirCode(){
         G.nbChoix=0;
         document.getElementById('btn-envoyer').disabled=false;
         document.getElementById('input-joueur').disabled=false;
-        ajouterRecit('<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ Code validé. L'empire continue.</p>');
+        ajouterRecit('<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ Code validé. Empire débloqué.</p>');
       }
     }else{alert('Code invalide.');}
   }).catch(()=>alert('Erreur de vérification.'));
