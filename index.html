@@ -136,10 +136,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .sauv.ok{color:var(--vert);}
 .sauv.en-cours{color:var(--or);}
 
-.main{display:flex;flex:1;gap:14px;padding:14px 0;min-height:0;}
+.main{display:block;flex:1;padding:14px 0;min-height:0;}
 
 /* ── PANNEAU EMPIRE ── */
-.empire-panel{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:calc(100vh - 80px);position:sticky;top:0;z-index:5;}
+.empire-panel{display:none;}
 .emp-bloc{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--rouge-dim);padding:12px 14px;position:relative;z-index:5;}
 .emp-titre{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rouge);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 .emp-ligne{display:flex;justify-content:space-between;align-items:center;padding:3px 0;}
@@ -165,11 +165,25 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .inv-vide{font-family:var(--mono);font-size:10px;color:var(--border2);font-style:italic;}
 
 .btn-prem{width:100%;padding:11px;background:linear-gradient(135deg,var(--rouge-dim),var(--or));color:#fff;border:none;font-family:var(--mono);font-size:9px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:opacity 0.2s;}
+
+/* Panneau déroulant Street Empire */
+.se-panel-btn{background:none;border:1px solid var(--border);color:var(--texte-dim);font-family:var(--mono);font-size:9px;padding:4px 10px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;text-transform:uppercase;}
+.se-panel-btn:hover{border-color:var(--rouge-vif);color:var(--or);}
+#se-panel{display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 0;}
+#se-panel.open{display:block;}
+.se-inner{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+.se-title{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rouge);border-bottom:1px solid var(--border);padding-bottom:5px;margin-bottom:8px;}
+.se-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0;font-size:11px;}
+.se-key{color:var(--texte-dim);font-family:var(--mono);}
+.se-val{color:var(--or);font-family:var(--mono);font-weight:bold;}
+.se-bar-wrap{background:var(--bg4);height:2px;margin-top:1px;margin-bottom:4px;overflow:hidden;}
+.se-bar{height:100%;background:var(--rouge);transition:width 0.4s ease;}
+@media(max-width:700px){.se-inner{grid-template-columns:1fr 1fr;}}
 .btn-prem:hover{opacity:0.85;}
 
 /* ── PANNEAU JEU ── */
-.jeu-panel{flex:1;display:flex;flex-direction:column;min-width:0;gap:10px;position:relative;z-index:5;}
-#recit{flex:1;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--rouge-dim);padding:22px;overflow-y:auto;min-height:0;font-family:var(--corps);position:relative;z-index:5;}
+.jeu-panel{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:5;}
+#recit{flex:1;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--rouge-dim);padding:22px;overflow-y:auto;min-height:calc(100svh - 140px);font-family:var(--corps);position:relative;z-index:5;padding-bottom:85px;}
 .entree{margin-bottom:20px;animation:fadeIn 0.35s ease;position:relative;z-index:5;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 .entree p{font-size:23px;line-height:1.9;color:var(--texte-clair);margin-bottom:10px;}
@@ -187,7 +201,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .choix-btn:last-child{margin-bottom:0;}
 
 /* Zone input */
-.input-zone{display:flex;gap:8px;flex-shrink:0;position:relative;z-index:5;}
+.input-zone{display:flex;gap:8px;flex-shrink:0;position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);padding:10px 16px;z-index:100;max-width:1160px;margin:0 auto;box-sizing:border-box;}
 #input-joueur{flex:1;background:var(--bg2);border:none;border-bottom:2px solid var(--beton);color:var(--texte-clair);font-family:var(--corps);font-size:14px;padding:12px 14px;resize:none;height:52px;outline:none;transition:border-color 0.2s;}
 #input-joueur:focus{border-bottom-color:var(--rouge);}
 #input-joueur::placeholder{color:var(--texte-dim);font-style:italic;}
@@ -206,10 +220,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 @media(max-width:700px){
   #app{padding:0 8px;}
   .main{flex-direction:column;gap:8px;padding:8px 0;}
-  .empire-panel{width:100%;max-height:none;position:static;flex-direction:row;flex-wrap:wrap;gap:8px;overflow:visible;}
+
   .empire-panel > div{min-width:140px;flex:1;}
-  #recit{min-height:260px;max-height:48vh;padding:14px;}
-  .entree p{font-size:14px;}
+  #recit{min-height:calc(100vh - 160px);padding:16px;padding-bottom:85px;}
+  .entree p{font-size:19px;line-height:1.85;}
   .logo{font-size:17px;}
   .voie-grid,.profil-grid,.mode-grid{grid-template-columns:1fr;}
 }
@@ -345,8 +359,59 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
     <div class="header-droite">
       <div class="voie-tag-hdr" id="voie-tag">—</div>
       <div class="sauv" id="sauv-ind">● prêt</div>
+      <button class="se-panel-btn" onclick="toggleSePanel()">Empire ▾</button>
     </div>
   </header>
+
+  <!-- Panneau déroulant -->
+  <div id="se-panel">
+    <div class="se-inner">
+
+      <div>
+        <div class="se-title">Identité</div>
+        <div style="font-family:var(--titre);font-size:18px;font-weight:700;color:var(--texte-clair);text-transform:uppercase;letter-spacing:1px;" id="se-surnom">—</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--rouge);letter-spacing:2px;margin-top:3px;" id="se-voie">—</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--texte-dim);margin-top:4px;" id="se-saison">Saison 1</div>
+        <div style="font-family:var(--titre);font-size:22px;font-weight:700;color:var(--or);letter-spacing:1px;margin-top:8px;" id="se-cash">$0</div>
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--texte-dim);text-transform:uppercase;">Cash disponible</div>
+      </div>
+
+      <div>
+        <div class="se-title">Personnel</div>
+        <div class="se-row"><span class="se-key">Réputation</span><span class="se-val" id="se-rep">10</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-rep" style="width:10%;"></div></div>
+        <div class="se-row"><span class="se-key">Influence</span><span class="se-val" id="se-inf">5</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-inf" style="width:5%;background:var(--or);"></div></div>
+        <div class="se-row"><span class="se-key">Santé</span><span class="se-val" id="se-san">100</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-san" style="width:100%;background:var(--vert);"></div></div>
+        <div class="se-row"><span class="se-key">Exposition</span><span class="se-val" id="se-exp">0</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-exp" style="width:0%;background:var(--beton-clair);"></div></div>
+      </div>
+
+      <div>
+        <div class="se-title">Empire</div>
+        <div class="se-row"><span class="se-key">Crew</span><span class="se-val" id="se-crew">2</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-crew" style="width:2%;background:var(--beton-clair);"></div></div>
+        <div class="se-row"><span class="se-key">Loyauté</span><span class="se-val" id="se-loy">60</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-loy" style="width:60%;background:var(--or);"></div></div>
+        <div class="se-row"><span class="se-key">Territoire</span><span class="se-val" id="se-ter">0</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-ter" style="width:0%;background:var(--vert);"></div></div>
+        <div class="se-row"><span class="se-key">Blanchiment</span><span class="se-val" id="se-bla">0%</span></div>
+        <div class="se-bar-wrap"><div class="se-bar" id="se-b-bla" style="width:0%;background:var(--or);"></div></div>
+      </div>
+
+      <div>
+        <div class="se-title">Stock & Lieu</div>
+        <div class="se-row"><span class="se-key">Drogue</span><span class="se-val" id="se-drogue">0</span></div>
+        <div class="se-row"><span class="se-key">Armes</span><span class="se-val" id="se-armes">0</span></div>
+        <div class="se-row"><span class="se-key">Lieu</span><span class="se-val" id="se-lieu" style="font-size:10px;">New York</span></div>
+        <div class="se-title" style="margin-top:10px;">Inventaire</div>
+        <div id="se-inventaire"><div style="font-size:11px;color:var(--texte-dim);font-style:italic;">Vide</div></div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="main">
     <div class="empire-panel">
 
@@ -577,14 +642,42 @@ function setSI(e){
 }
 
 // ── UI ──
+function toggleSePanel(){
+  const p=document.getElementById('se-panel');
+  const b=document.querySelector('.se-panel-btn');
+  p.classList.toggle('open');
+  if(b)b.textContent=p.classList.contains('open')?'Empire ▴':'Empire ▾';
+}
+
 function miseAJourUI(){
   document.getElementById('voie-tag').textContent=G.voie==='rue'?'Gang de rue':'Mafia';
+  // Nouveau panneau
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  const setW=(id,w,col)=>{const e=document.getElementById(id);if(e){e.style.width=Math.min(100,w)+'%';if(col)e.style.background=col;}};
+  set('se-surnom',G.surnom||'—');
+  set('se-voie',G.voie==='rue'?'Gang · New York':'Mafia · Brooklyn');
+  set('se-saison','Saison '+G.saison);
+  set('se-cash','$'+(G.cash||0).toLocaleString());
+  const p=G.perso;
+  set('se-rep',p.rep);setW('se-b-rep',Math.min(100,p.rep));
+  set('se-inf',p.inf);setW('se-b-inf',Math.min(100,p.inf),'var(--or)');
+  set('se-san',p.sante);setW('se-b-san',p.sante,p.sante>50?'var(--vert)':p.sante>25?'var(--or)':'var(--rouge)');
+  set('se-exp',p.exposition);setW('se-b-exp',Math.min(100,p.exposition),p.exposition>70?'var(--rouge-vif)':p.exposition>40?'var(--or)':'var(--beton-clair)');
+  const e=G.empire;
+  set('se-crew',e.crew);setW('se-b-crew',Math.min(100,e.crew),'var(--beton-clair)');
+  set('se-loy',e.loyaute);setW('se-b-loy',e.loyaute,'var(--or)');
+  set('se-ter',e.territoire);setW('se-b-ter',Math.min(100,e.territoire*10),'var(--vert)');
+  set('se-bla',e.blanchiment+'%');setW('se-b-bla',e.blanchiment,'var(--or)');
+  set('se-drogue',e.drogue);
+  set('se-armes',e.armes);
+  set('se-lieu',G.lieu);
+  const invSe=document.getElementById('se-inventaire');
+  if(invSe)invSe.innerHTML=G.inventaire.length?G.inventaire.map(it=>`<div class="se-row"><span class="se-key">▸ ${it}</span></div>`).join(''):'<div style="font-size:11px;color:var(--texte-dim);font-style:italic;">Vide</div>';
   document.getElementById('p-surnom').textContent=G.surnom||'—';
   document.getElementById('p-voie').textContent=G.voie==='rue'?'Gang · New York':'Mafia · Brooklyn';
   document.getElementById('p-saison').textContent='Saison '+G.saison;
   document.getElementById('e-cash').textContent='$'+(G.cash||0).toLocaleString();
   // Perso
-  const p=G.perso;
   document.getElementById('s-rep').textContent=p.rep;document.getElementById('b-rep').style.width=Math.min(100,p.rep)+'%';
   document.getElementById('s-inf').textContent=p.inf;document.getElementById('b-inf').style.width=Math.min(100,p.inf)+'%';
   document.getElementById('s-san').textContent=p.sante;document.getElementById('b-san').style.width=p.sante+'%';
@@ -592,7 +685,6 @@ function miseAJourUI(){
   document.getElementById('s-exp').textContent=p.exposition;document.getElementById('b-exp').style.width=Math.min(100,p.exposition)+'%';
   document.getElementById('b-exp').style.background=p.exposition>70?'var(--rouge-vif)':p.exposition>40?'var(--or)':'var(--beton-clair)';
   // Empire
-  const e=G.empire;
   document.getElementById('e-crew').textContent=e.crew;document.getElementById('b-crew').style.width=Math.min(100,e.crew)+'%';
   document.getElementById('e-loy').textContent=e.loyaute;document.getElementById('b-loy').style.width=e.loyaute+'%';
   document.getElementById('e-ter').textContent=e.territoire;document.getElementById('b-ter').style.width=Math.min(100,e.territoire*10)+'%';
