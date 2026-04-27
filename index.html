@@ -448,6 +448,7 @@ function choisirMode(m){
   document.getElementById('input-joueur').style.display=m==='boutons'?'none':'flex';
 }
 function verifierSetup(){
+  const surnom=document.getElementById('surnom-input').value.trim();
   document.getElementById('btn-lancer').disabled=!(G.voie&&G.profil);
 }
 document.getElementById('age-slider').addEventListener('input',function(){
@@ -704,7 +705,7 @@ async function validerCode(){
       document.getElementById('code-overlay')?.remove();
       ajouterRecit(`<p style="color:var(--vert);font-family:var(--mono);font-size:11px;letter-spacing:2px;">✓ ${data.admin?'Accès admin activé.':'Code validé. Empire débloqué.'}</p>`);
     }else{msgEl.textContent='Code invalide.';btn.disabled=false;btn.textContent='Valider';}
-  }catch(){msgEl.textContent='Erreur de connexion.';btn.disabled=false;btn.textContent='Valider';}
+  }catch(err){msgEl.textContent='Erreur de connexion.';btn.disabled=false;btn.textContent='Valider';}
 }
 
 // ── STREAMING via proxy Vercel ──
