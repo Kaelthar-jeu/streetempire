@@ -22,12 +22,9 @@
 }
 html,body{height:100%;background:var(--bg);color:var(--texte);font-family:var(--corps);font-size:16px;line-height:1.7;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
-
 .studio-bar{position:relative;z-index:10;background:#080808;border-bottom:2px solid var(--rouge-dim);padding:6px 16px;text-align:center;}
 .studio-bar a{color:var(--texte-dim);font-size:11px;text-decoration:none;letter-spacing:3px;font-family:var(--mono);transition:color 0.2s;}
 .studio-bar a:hover{color:var(--rouge);}
-
-/* INTRO */
 #ecran-intro{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background-image:linear-gradient(to bottom,transparent 40%,rgba(204,34,0,0.04) 100%),repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,0.008) 80px,rgba(255,255,255,0.008) 81px),repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(255,255,255,0.008) 80px,rgba(255,255,255,0.008) 81px);}
 .intro-inner{max-width:560px;width:100%;text-align:left;}
 .intro-tag{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--rouge);text-transform:uppercase;margin-bottom:24px;animation:glisse 0.7s ease 0.1s both;}
@@ -43,8 +40,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .btn-intro-s{background:none;border:1px solid var(--beton);color:var(--texte-dim);font-family:var(--mono);font-size:11px;letter-spacing:3px;padding:16px 24px;cursor:pointer;text-transform:uppercase;transition:all 0.2s;display:none;}
 .btn-intro-s:hover{border-color:var(--rouge-dim);color:var(--texte);}
 @keyframes glisse{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
-
-/* SETUP */
 #ecran-setup{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px;background-image:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,0.006) 80px,rgba(255,255,255,0.006) 81px);}
 .setup-wrap{max-width:600px;margin:auto;padding:40px 0;}
 .setup-titre{font-family:var(--titre);font-size:36px;font-weight:700;letter-spacing:2px;color:var(--texte-clair);text-transform:uppercase;border-left:4px solid var(--rouge);padding-left:16px;margin-bottom:4px;}
@@ -80,8 +75,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .btn-setup{width:100%;background:var(--rouge);border:none;color:#fff;font-family:var(--titre);font-size:16px;font-weight:700;letter-spacing:4px;padding:16px;cursor:pointer;text-transform:uppercase;transition:background 0.2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));margin-top:8px;}
 .btn-setup:hover{background:var(--rouge-vif);}
 .btn-setup:disabled{background:var(--beton);cursor:not-allowed;clip-path:none;}
-
-/* REPRISE */
 #ecran-reprise{display:none;position:fixed;inset:0;z-index:250;background:rgba(12,12,12,0.97);align-items:center;justify-content:center;padding:20px;}
 .reprise-box{background:var(--bg2);border:2px solid var(--beton);max-width:420px;width:100%;padding:36px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);}
 .reprise-titre{font-family:var(--titre);font-size:26px;font-weight:700;letter-spacing:2px;color:var(--texte-clair);text-transform:uppercase;border-left:3px solid var(--rouge);padding-left:12px;margin-bottom:24px;}
@@ -95,8 +88,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .rbp:hover{background:var(--rouge-vif);}
 .rbn{background:var(--bg3);color:var(--texte-dim);border:2px solid var(--beton);}
 .rbn:hover{border-color:var(--rouge-dim);color:var(--texte);}
-
-/* APP */
 #app{display:flex;flex-direction:column;min-height:100vh;max-width:1160px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
 header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px;border-bottom:2px solid var(--rouge-dim);flex-shrink:0;}
 .logo{font-family:var(--titre);font-size:22px;font-weight:700;letter-spacing:2px;color:var(--texte-clair);text-transform:uppercase;}
@@ -107,8 +98,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .sauv.ok{color:var(--vert);}
 .sauv.en-cours{color:var(--or);}
 .main{display:block;flex:1;padding:14px 0;min-height:0;}
-
-/* PANNEAU EMPIRE */
 .empire-panel{display:none;}
 .emp-bloc{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--rouge-dim);padding:12px 14px;position:relative;z-index:5;}
 .emp-titre{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rouge);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
@@ -130,8 +119,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .inv-item{font-family:var(--mono);font-size:10px;color:var(--texte-dim);padding:3px 0;border-bottom:1px solid var(--border);}
 .inv-item:last-child{border-bottom:none;}
 .inv-vide{font-family:var(--mono);font-size:10px;color:var(--border2);font-style:italic;}
-
-/* Panneau déroulant */
 .se-panel-btn{background:none;border:1px solid var(--border);color:var(--texte-dim);font-family:var(--mono);font-size:9px;padding:4px 10px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;text-transform:uppercase;}
 .se-panel-btn:hover{border-color:var(--rouge-vif);color:var(--or);}
 #se-panel{display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 0;}
@@ -146,8 +133,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 @media(max-width:700px){.se-inner{grid-template-columns:1fr 1fr;}}
 .btn-prem{width:100%;padding:11px;background:linear-gradient(135deg,var(--rouge-dim),var(--or));color:#fff;border:none;font-family:var(--mono);font-size:9px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:opacity 0.2s;}
 .btn-prem:hover{opacity:0.85;}
-
-/* JEU */
 .jeu-panel{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:5;}
 #recit{flex:1;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--rouge-dim);padding:22px;overflow-y:auto;min-height:calc(100svh - 140px);font-family:var(--corps);position:relative;z-index:5;padding-bottom:85px;}
 .entree{margin-bottom:20px;animation:fadeIn 0.35s ease;position:relative;z-index:5;}
@@ -192,7 +177,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
   <a href="https://recitgames.vercel.app">&#9664; RÉCIT GAMES</a>
 </div>
 
-<!-- INTRO -->
 <div id="ecran-intro">
   <div class="intro-inner">
     <div class="intro-tag">New York · Empire criminel · Roman interactif</div>
@@ -211,12 +195,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
   </div>
 </div>
 
-<!-- SETUP -->
 <div id="ecran-setup">
   <div class="setup-wrap">
     <div class="setup-titre">Street Empire</div>
     <div class="setup-sous">Configuration — Récit Games</div>
-
     <div class="setup-bloc">
       <label class="setup-label">Ta voie</label>
       <div class="voie-grid">
@@ -232,7 +214,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
         </div>
       </div>
     </div>
-
     <div class="setup-bloc">
       <label class="setup-label">Ton profil</label>
       <div class="profil-grid">
@@ -250,17 +231,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
         </div>
       </div>
     </div>
-
     <div class="setup-bloc">
       <label class="setup-label">Ton surnom dans la rue</label>
       <input class="setup-input" type="text" id="surnom-input" placeholder="Le surnom que la rue va retenir..." maxlength="20"/>
     </div>
-
     <div class="setup-bloc">
       <label class="setup-label">Ton vrai prénom</label>
       <input class="setup-input" type="text" id="prenom-input" placeholder="Prénom..." maxlength="20"/>
     </div>
-
     <div class="setup-bloc">
       <label class="setup-label">Âge</label>
       <div class="slider-wrap">
@@ -268,7 +246,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
         <span class="slider-val" id="age-val">22</span>
       </div>
     </div>
-
     <div class="setup-bloc">
       <label class="setup-label">Mode d'interaction</label>
       <div class="mode-grid">
@@ -282,13 +259,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
         </div>
       </div>
     </div>
-
     <button class="btn-setup" id="btn-lancer" onclick="lancerJeu()" disabled>Entrer dans l'empire</button>
     <p style="font-family:var(--mono);font-size:10px;color:var(--texte-dim);text-align:center;margin-top:12px;letter-spacing:1px;">Progression sauvegardée automatiquement</p>
   </div>
 </div>
 
-<!-- REPRISE -->
 <div id="ecran-reprise">
   <div class="reprise-box">
     <div class="reprise-titre">Street Empire</div>
@@ -300,7 +275,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <header>
     <div class="logo">Street<span>Empire</span></div>
@@ -311,7 +285,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
     </div>
   </header>
 
-  <!-- Panneau déroulant -->
   <div id="se-panel">
     <div class="se-inner">
       <div>
@@ -448,7 +421,6 @@ function choisirMode(m){
   document.getElementById('input-joueur').style.display=m==='boutons'?'none':'flex';
 }
 function verifierSetup(){
-  const surnom=document.getElementById('surnom-input').value.trim();
   document.getElementById('btn-lancer').disabled=!(G.voie&&G.profil);
 }
 document.getElementById('age-slider').addEventListener('input',function(){
@@ -609,16 +581,27 @@ RÈGLE 4 — PRISON ET MORT SONT RÉELLES.
 RÈGLE 5 — LE CASH EST VITAL. Cash à zéro = spirale de trahisons.
 RÈGLE 6 — LES BONS CHOIX NE SONT PAS ÉVIDENTS.
 
-=== FORMAT OBLIGATOIRE ===
+=== FORMAT RÉPONSE ===
 Narration (120-200 mots, style The Wire)
 
 [ Cash ±$X ] [ Réputation ±X ] [ Exposition ±X ] etc. si pertinent
 
-${G.mode==='boutons'?`[ CHOIX ]
-1 — option
-2 — option
-3 — option
-4 — option`:'Termine par une question ouverte sur ce que le joueur veut faire.'}
+${G.mode==='boutons'?`FORMAT CHOIX — RÈGLE ABSOLUE ET NON NÉGOCIABLE :
+Chaque réponse DOIT se terminer par exactement ce bloc, sans exception :
+
+[ CHOIX ]
+1 — option précise
+2 — option précise
+3 — option précise
+4 — option précise
+
+INTERDICTIONS STRICTES :
+- Ne JAMAIS omettre le bloc [ CHOIX ]
+- Ne JAMAIS utiliser autre chose que le tiret long — (—) entre le numéro et le texte
+- Ne JAMAIS numéroter autrement que 1, 2, 3, 4
+- Ne JAMAIS mettre de texte après les 4 choix sauf les balises système
+- Les balises [ Cash ] [ Réputation ] [ PAYWALL ] etc. vont TOUJOURS avant [ CHOIX ]
+- Ne JAMAIS reformater ou modifier cette structure`:'Termine par une question ouverte sur ce que le joueur veut faire.'}
 
 === PAYWALL ===
 Quand nbChoix atteint ${PAYWALL}, insère : [ PAYWALL ]`.trim();
@@ -644,12 +627,12 @@ function parserReponse(texte){
   texte=texte.replace(/\[\s*([^\]]+?)\s*retiré[e]?\s*de\s*l['']inventaire\s*\]/gi,(_,it)=>{G.inventaire=G.inventaire.filter(i=>i.toLowerCase()!==it.trim().toLowerCase());mises.push(`[${it.trim()}✗]`);return '';});
   if(!G.adminMode&&/\[\s*PAYWALL\s*\]/i.test(texte)){texte=texte.replace(/\[\s*PAYWALL\s*\]/gi,'');setTimeout(declencherPaywall,600);}
   let htmlChoix='';
-  const mChoix=texte.match(/\[\s*CHOIX\s*\]([\s\S]*?)(?=\n\n|\n\[|$)/i);
+  const mChoix=texte.match(/\[\s*CHOIX\s*\]([\s\S]*)/i);
   if(mChoix){
     texte=texte.replace(mChoix[0],'').trim();
-    const lignes=mChoix[0].split('\n').filter(l=>/^\d[\s—\-]/.test(l.trim()));
+    const lignes=mChoix[1].split('\n').filter(l=>/^\d[\s\u2014\u2013\-]/.test(l.trim()));
     if(lignes.length){
-      window._choix=lignes.map(l=>l.replace(/^\d\s*[—\-]\s*/,'').trim());
+      window._choix=lignes.map(l=>l.replace(/^\d\s*[\u2014\u2013\-]\s*/,'').trim());
       htmlChoix='<div class="choix-bloc"><div class="choix-titre">Que fais-tu ?</div>'+window._choix.map((t,i)=>`<button class="choix-btn" onclick="envoyerChoix(${i})">${lignes[i].trim()}</button>`).join('')+'</div>';
     }
   }
@@ -708,7 +691,6 @@ async function validerCode(){
   }catch(err){msgEl.textContent='Erreur de connexion.';btn.disabled=false;btn.textContent='Valider';}
 }
 
-// ── STREAMING via proxy Vercel ──
 async function streamerMessage(msg){
   G.historique.push({role:'user',content:msg});
   const recit=document.getElementById('recit');
